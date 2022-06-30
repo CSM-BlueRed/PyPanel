@@ -12,13 +12,33 @@ prog = ...
 default_banner = ''
 default_banner_second_chars = ['░', '▒', '▓', '█']
 title_format = r':name: :version:'
-enable_title = True
+titleEnabled = True
+
+def setTitleFormat(format):
+    r"""
+    Set the format of the title
+    """
+    globals()['title_format'] = format
 
 def setDefaultBanner(banner):
     r"""
     Set the default banner used when the banner of a panel is not set
     """
     globals()['default_banner'] = banner
+
+def enable_title():
+    r"""
+    Enable the title
+    """
+    globals()['titleEnabled'] = True
+
+def disable_title():
+    r"""
+    Disable the title
+    """
+    globals()['titleEnabled'] = False
+
+
 
 setSize = System.Size
 
@@ -233,13 +253,14 @@ class Program():
     The program class
     """
 
-    def __init__(self, name: str, version: str, authors: tuple[str, ...], description: str, license: tuple):
+    def __init__(self, name: str, version: str, authors: tuple[str, ...], description: str, license: tuple, **options) -> None:
         self.name = name
         self.version = tuple(int(num) for num in version.split('.'))
         self.authors = authors
         self.description = description
         self.license = license
         self._panel = ...
+        self.options = options
 
         progInfos = {'name': self.name, 'version': self.version, 'authors': self.authors, 'description': self.description, 'license': self.license}
         _log(f'Added program {progInfos}')
@@ -257,8 +278,10 @@ class Program():
         Set a new panel as the current
         """
         self._panel = panel
-        if enable_title:
-            title = title_format.replace(r':name:', self.name).replace(r':version:', '.'.join(str(num) for num in self.version)).replace(r':authors:', ', '.join(self.authors)).replace(r':description:', self.description).replace(r':license:', self.license)
+        if titleEnabled:
+            title = title_format.replace(r':name:', self.name).replace(r':version:', '.'.join(str(num) for num in self.version)).replace(r':authors:', ', '.join(self.authors)).replace(r':description:', self.description).replace(r':license:', self.license).replace(r':panel:', panel.name)
+            for key, value in self.options.items():
+                title = title.replace(fr':{key}:', str(value))
             System.Title(title)
             _log(f'Set title to {title}')
 

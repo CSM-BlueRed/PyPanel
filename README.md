@@ -4,6 +4,12 @@ PyPanel is a module used to create beautiful tools
 
 ## Setup your program
 
+To setup your program, you have to create a `Program` object and set an attribute to the `prog` var in the module
+
+```python
+Program(name, version, authors, description, license, **options)
+```
+
 ```python
 # (!) This is just a example
 
@@ -22,12 +28,45 @@ prog = Program(
 setattr(PyPanel, 'prog', prog)
 ```
 
-## The Context class
+`Program` class functions:
+- `.update(panel)`: Change the title of the console if the title is actived
 
+## Set a title format
+By default, the title change automatically to `:name: :version:` (ex: `Socket Tools 1.0`), but you can change it or disable it
+
+```python
+# (!) This is just a example
+
+from PyPanel import *
+
+# change title format
+setTitleFormat(r':name: version :version: / made by :authors:') # the title will be 
+
+# disable title
+disable_title()
+
+# enable title
+enable_title()
+```
+
+The title format has many arguments:
+- `:name:`: the name of the program
+- `:version:`: the version of the program
+- `:authors:`: the author(s) of the program
+- `:description:`: the description of the program
+- `:license:`: the license of the program
+- `:panel:`: the current panel
+
+if you have added options in your Program class, you can add this value to your title with `:`, your option and `:` (ex: `:option:`), the title will take the string value of the object
+
+## The Context class
 The Context class is used to pass informations to the commands as a class and not as multiple arguments
 
-when the Context arg is passed, it has for arguments:
+```python
+Context(panel, func)
+```
 
+when the Context arg is passed, it has for arguments:
 - `ctx.panel`: the current panel that is used
 - `ctx.function`: the command that is currently called
 
@@ -92,6 +131,10 @@ def http_put(ctx: Context) -> None:
 To create a panel, you have to use the Panel class with the name of the panel, it instructions (commands) and other arguments
 
 ```python
+Panel(name, colors, instructions, banner, banner_second_chars, **options)
+```
+
+```python
 # (!) This is just a example
 
 from PyPanel import *
@@ -114,6 +157,10 @@ main = Panel('Main', (Colors.rainbow), [
     ('PUT request', http_put)
 ], banner)
 ```
+
+`Panel` class functions:
+- `.render()`: Render the final panel string display
+- `.listen(*args)`: Listen to the user input and execute the command
 
 ## Start your program
 To start your program, select your main panel, and use the `listen` function
