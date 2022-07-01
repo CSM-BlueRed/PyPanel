@@ -103,7 +103,7 @@ class Command():
 
     def __init__(self, func) -> None:
         self.command = func
-        self.name = func.__name__
+        self.name = ' '.join(word.capitalize() for word in func.__name__.split('_'))
         self.results = []
 
         _log(f'Added command for {self.command}')
@@ -174,7 +174,7 @@ class Panel():
             table = Add.Add(*['\n'.join(f'[ {getIndex()} ] ' + instr  + (' ' * Panel.spaces) for instr in instrs) for instrs in cases])
         else:
             table = '\n'.join(f'[ {getIndex()} ] ' + instr  + (' ' * Panel.spaces) for instr in cases[0])
-        table = '[/] ' + self.name + '\n' + table
+        table = '[/] ' + '__left_panel__' + '\n' + table
 
         width = 60
         up = Panel.chars['top_left'] + (Panel.chars['up'] * width) + Panel.chars['top_right']
@@ -192,24 +192,26 @@ class Panel():
 
         _log(f'Rendered panel {self.name}')
 
-    def listen(self, *args):
+    def listen(self, *args, left_panel = exit):
         r"""
         Listen to the user input and execute the command
         """
         _log(f'Listening to {self.name}')
         while True:
             prog.update(self)
+            table = self.table.replace('__left_panel__', f'{left_panel.name} => {self.name}' + (' ' * len('=>')) if type(left_panel) == Panel else self.name + (' ' * (len('__left_panel__') - len(self.name))))
             print('\033[H\033[J', end = '')
             print(
                 '\n'.join([
                     '',
                     Colorate.Format(Center.XCenter(self.banner), self.banner_second_chars, Colorate.Horizontal, self.colors, Col.white),
                     '',
-                    Colorate.Diagonal(self.colors, Center.XCenter(self.table)),
+                    Colorate.Diagonal(self.colors, Center.XCenter(table)),
                     ''
                 ])
             )
-            cmd = Write.Input(self.input, self.colors, 0.005)
+            cmd = Write.Input(self.input, self.colors, 0.005).strip()
+            if cmd == '/': left_panel.listen() if type(left_panel) == Panel else left_panel()
             if cmd not in [str(num) for num in range(len(self.instructions))]:
                 _log(f'Command {cmd} not found')
                 Colorate.Error(self.command404.replace(':cmd:', cmd))
@@ -217,8 +219,9 @@ class Panel():
             command = self.instructions[int(cmd)][1]
             context = Context(self, command)
             if type(command) == Panel:
-                command.listen(context)
+                command.listen(context, left_panel = self)
             else:
+                prog.update(self, command)
                 try: command(context)
                 except Exception as error: _events['onError'](context, error)
                 _log(f'Command {command} executed')
@@ -259,36 +262,43 @@ class Program():
         self.authors = authors
         self.description = description
         self.license = license
-        self._panel = ...
+        self.panel = ...
         self.options = options
+        self.last_command = None
 
         progInfos = {'name': self.name, 'version': self.version, 'authors': self.authors, 'description': self.description, 'license': self.license}
         _log(f'Added program {progInfos}')
 
-    @property
-    def panel(self) -> Panel:
-        r"""
-        Return the current panel
-        """
-        return self._panel
-
-    @panel.setter
-    def panel(self, panel: Panel) -> None:
-        r"""
-        Set a new panel as the current
-        """
-        self._panel = panel
-        if titleEnabled:
-            title = title_format.replace(r':name:', self.name).replace(r':version:', '.'.join(str(num) for num in self.version)).replace(r':authors:', ', '.join(self.authors)).replace(r':description:', self.description).replace(r':license:', self.license).replace(r':panel:', panel.name)
-            for key, value in self.options.items():
-                title = title.replace(fr':{key}:', str(value))
-            System.Title(title)
-            _log(f'Set title to {title}')
-
-    def update(self, panel: Panel = None) -> None:
+    def update(self, panel: Panel = None, command: Command = None) -> None:
         r"""
         Update the current panel
         """
         self.panel = panel
+        if command:
+            self.last_command = command
+        if titleEnabled:
+            title = title_format.replace(
+                r':name:', self.name
+            ).replace(
+                r':version:', '.'.join(str(num) for num in self.version)
+            ).replace(
+                r':authors:', ', '.join(self.authors)
+            ).replace(
+                r':description:', self.description
+            ).replace(
+                r':license:', self.license
+            ).replace(
+                r':panel:', panel.name
+            ).replace(
+                r':cmd:', ''
+            )
+            if command:
+                title = title.replace(
+                    r':cmd:', command.name
+                )
+            for key, value in self.options.items():
+                title = title.replace(fr':{key}:', str(value))
+            System.Title(title)
+            _log(f'Set title to {title}')
 
 prog: Program
