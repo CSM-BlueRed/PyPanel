@@ -2,6 +2,14 @@
 
 PyPanel is a module used to create beautiful tools
 
+### Stats
+- Pypi Link: [pypi.org/project/PyPanel](https://pypi.org/project/PyPanel)
+- Stats Link: [pepy.tech/project/pypanel](https://pepy.tech/project/PyPanel)
+
+[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=total&units=international_system&left_color=red&right_color=red&left_text=Downloads)](https://pepy.tech/project/pypanel)
+[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=month&units=international_system&left_color=red&right_color=red&left_text=Downloads%20per%20month)](https://pepy.tech/project/pypanel)
+[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=week&units=international_system&left_color=red&right_color=red&left_text=Downloads%20per%20week)](https://pepy.tech/project/pypanel)
+
 ## Setup your program
 
 To setup your program, you have to create a `Program` object and set an attribute to the `prog` var in the module
@@ -94,7 +102,7 @@ def on_error(ctx: Context, exception) -> None:
     input(f'An error has occurred in the command {ctx.function}: {exception}')
 ```
 
-# Create commands
+## Create commands
 
 To create commands, first: create just a normal function witch contain an argument for the Context when it be called at the first place, and use the decorator `@Command`
 
