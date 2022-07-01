@@ -1,6 +1,6 @@
 [tool.poetry]
-name = 'poetry-demo'
-version = '1.0'
+name = 'PyPanel'
+version = '1.1'
 description = 'A module used to create beautiful tools and menu for a Python project or program'
 authors = ['BlueRed']
 
@@ -8,6 +8,3 @@ authors = ['BlueRed']
 python = '>=3.6'
 
 [tool.poetry.dev-dependencies]
-
-[build-system]
-requires = ['poetry>=0.12']
