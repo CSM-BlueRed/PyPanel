@@ -1,4 +1,4 @@
-__version__: str = '1.0'
+__version__: str = '1.1'
 __author__: str = 'BlueRed'
 __license__: str= 'MIT'
 
