@@ -6,9 +6,7 @@ PyPanel is a module used to create beautiful tools
 - Pypi Link: [pypi.org/project/PyPanel](https://pypi.org/project/PyPanel)
 - Stats Link: [pepy.tech/project/pypanel](https://pepy.tech/project/PyPanel)
 
-[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=total&units=international_system&left_color=red&right_color=red&left_text=Downloads)](https://pepy.tech/project/pypanel)
-[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=month&units=international_system&left_color=red&right_color=red&left_text=Downloads%20per%20month)](https://pepy.tech/project/pypanel)
-[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=week&units=international_system&left_color=red&right_color=red&left_text=Downloads%20per%20week)](https://pepy.tech/project/pypanel)
+[![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=total&units=international_system&left_color=red&right_color=red&left_text=Downloads)](https://pepy.tech/project/pypanel) [![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=month&units=international_system&left_color=red&right_color=red&left_text=Downloads%20per%20month)](https://pepy.tech/project/pypanel) [![Downloads](https://static.pepy.tech/personalized-badge/pypanel?period=week&units=international_system&left_color=red&right_color=red&left_text=Downloads%20per%20week)](https://pepy.tech/project/pypanel)
 
 ## Setup your program
 
