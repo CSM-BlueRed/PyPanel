@@ -1,6 +1,10 @@
-__version__: str = '1.1'
+__version__: str = '1.2'
 __author__: str = 'BlueRed'
-__license__: str= 'MIT'
+__license__: str = 'MIT'
+__note__: str = f"""
+# PyPanel (VERSION {__version__})
+Added: Panel.MakeOutText
+"""
 
 from pystyle import *
 from io import BytesIO
@@ -37,8 +41,6 @@ def disable_title():
     Disable the title
     """
     globals()['titleEnabled'] = False
-
-
 
 setSize = System.Size
 
@@ -146,6 +148,16 @@ class Panel():
         self.input = options.get('input', 'Choose a command >>> ')
         self.command404 = options.get('cmd404', 'Command not found :cmd:')
 
+        self.text = {
+            'top': '',
+            'middle': '',
+            'bottom': '',
+            'left': '',
+            'right': '',
+            'bottom_left': '',
+            'bottom_right': '',
+        }
+
         self.render()
 
         panelInfos = {'name': self.name, 'input': self.input, 'command 404 error': self.command404, 'instructions': self.instructions}
@@ -174,7 +186,7 @@ class Panel():
             table = Add.Add(*['\n'.join(f'[ {getIndex()} ] ' + instr  + (' ' * Panel.spaces) for instr in instrs) for instrs in cases])
         else:
             table = '\n'.join(f'[ {getIndex()} ] ' + instr  + (' ' * Panel.spaces) for instr in cases[0])
-        table = '[/] ' + '__left_panel__' + '\n' + table
+        table = '[/] ' + '?' + '\n' + table
 
         width = 60
         up = Panel.chars['top_left'] + (Panel.chars['up'] * width) + Panel.chars['top_right']
@@ -183,7 +195,9 @@ class Panel():
         final = '\n'.join((
             up,
             '\n'.join(Panel.chars['left'] + ' ' + line + (
-                (' ' * (width - len(Panel.chars['left'] + ' ' + line) + 1)) + Panel.chars['right']
+                (' ' * (
+                    (width - len(Panel.chars['left'] + ' ' + line) + 1)
+                )) + Panel.chars['right']
             ) for line in table.splitlines()),
             down
         ))
@@ -199,15 +213,45 @@ class Panel():
         _log(f'Listening to {self.name}')
         while True:
             prog.update(self)
-            table = self.table.replace('__left_panel__', f'{left_panel.name} => {self.name}' + (' ' * len('=>')) if type(left_panel) == Panel else self.name + (' ' * (len('__left_panel__') - len(self.name))))
+            info = f'{left_panel.name} => {self.name}'
+            table = self.table.replace(
+                self.table.splitlines()[1],
+                self.table.splitlines()[1].replace(
+                    '?' + self.table.splitlines()[1].split('?')[1].split(Panel.chars['right'])[0].strip(),
+                    info
+                )
+            )
+            lines_parts = table.splitlines()[1].split(Panel.chars['right'])
+            table = table.replace(table.splitlines()[1].split(Panel.chars['right'])[1], lines_parts[1][:-(len(info) - 1)])
+
+            if self.text['bottom_left']:
+                table = Add.Add(self.text['bottom_left'], table, center = True)
+
+            if self.text['bottom_right']:
+                table = Add.Add(table, self.text['bottom_right'], center = True)
+
+            banner = self.banner
+
+            if self.text['left']:
+                banner = Add.Add(self.text['left'], banner, center = True)
+
+            if self.text['right']:
+                banner = Add.Add(banner, self.text['right'], center = True)
+
+            colored_banner = Colorate.Diagonal(self.colors, Center.XCenter(table))
+
             print('\033[H\033[J', end = '')
             print(
                 '\n'.join([
+                    self.text['top'],
                     '',
-                    Colorate.Format(Center.XCenter(self.banner), self.banner_second_chars, Colorate.Horizontal, self.colors, Col.white),
+                    Colorate.Format(Center.XCenter(banner), self.banner_second_chars, Colorate.Horizontal, self.colors, Col.white),
                     '',
-                    Colorate.Diagonal(self.colors, Center.XCenter(table)),
-                    ''
+                    self.text['middle'],
+                    '',
+                    colored_banner,
+                    '',
+                    self.text['bottom']
                 ])
             )
             cmd = Write.Input(self.input, self.colors, 0.005).strip()
@@ -226,6 +270,42 @@ class Panel():
                 except Exception as error: _events['onError'](context, error)
                 _log(f'Command {command} executed')
             input()
+
+    def MakeOutText(self, top: str = None, middle: str = None, bottom: str = None, left: str = None, right: str = None, bottom_left: str = None, bottom_right: str = None) -> None:
+        r"""
+        Make the text for the panel
+
+        ```
+                                     top
+
+                BBBB      AA     NNNN  NN NNNN  NN EEEEEEEE RRRRRR
+                B   B    AAAA    NNNNN NN NNNNN NN EE       RR  RRR
+        left    BBBB    AA  AA   NN  NNNN NN  NNNN EEEEEE   RRRRRRR     right
+                B   B  AAAAAAAA  NN   NNN NN   NNN EE       RR   RR
+                BBBB  AA      AA NN    NN NN    NN EEEEEEEE RR    RR
+
+                                    middle
+
+                    o--------------------------------------o
+                    |    1. choice           5. choice     |
+        bottom_left |    2. choice           6. choice     | bottom_right
+                    |    3. choice           7. choice     |
+                    |    4. choice           8. choice     |
+                    o--------------------------------------o
+
+                                    bottom
+        ```
+        """
+        if top: self.text['top'] = Center.XCenter(top)
+        if middle: self.text['middle'] = Center.XCenter(middle)
+        if bottom: self.text['bottom'] = Center.XCenter(bottom)
+        self.text['left'] = left
+        self.text['right'] = right
+        self.text['bottom_left'] = bottom_left
+        self.text['bottom_right'] = bottom_right
+        self.render()
+        _log(f'Made out text for {self.name}')
+
 
     def __str__(self):
         r"""
