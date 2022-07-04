@@ -3,6 +3,7 @@
 PyPanel is a module used to create beautiful tools
 
 ### Stats
+
 - Pypi Link: [pypi.org/project/PyPanel](https://pypi.org/project/PyPanel)
 - Stats Link: [pepy.tech/project/pypanel](https://pepy.tech/project/PyPanel)
 
@@ -35,9 +36,11 @@ setattr(PyPanel, 'prog', prog)
 ```
 
 `Program` class functions:
+
 - `.update(panel)`: Change the title of the console if the title is actived
 
 ## Set a title format
+
 By default, the title change automatically to `:name: :version:` (ex: `Socket Tools 1.0`), but you can change it or disable it
 
 ```python
@@ -56,16 +59,19 @@ enable_title()
 ```
 
 The title format has many arguments:
+
 - `:name:`: the name of the program
 - `:version:`: the version of the program
 - `:authors:`: the author(s) of the program
 - `:description:`: the description of the program
 - `:license:`: the license of the program
 - `:panel:`: the current panel
+- `:cmd:`: the current cmd (if not command, set to `''`)
 
 if you have added options in your Program class, you can add this value to your title with `:`, your option and `:` (ex: `:option:`), the title will take the string value of the object
 
 ## The Context class
+
 The Context class is used to pass informations to the commands as a class and not as multiple arguments
 
 ```python
@@ -73,6 +79,7 @@ Context(panel, func)
 ```
 
 when the Context arg is passed, it has for arguments:
+
 - `ctx.panel`: the current panel that is used
 - `ctx.function`: the command that is currently called
 
@@ -165,10 +172,59 @@ main = Panel('Main', (Colors.rainbow), [
 ```
 
 `Panel` class functions:
+
 - `.render()`: Render the final panel string display
 - `.listen(*args)`: Listen to the user input and execute the command
 
+## Add text on your panel
+
+To add text on your panel, you have to call the function `Panel.MakeOutText`.
+
+```python
+Panel.MakeOutText(top, middle, bottom, left, right, bottom_left, bottom_right)
+```
+
+```
+                                     top
+
+                BBBB      AA     NNNN  NN NNNN  NN EEEEEEEE RRRRRR
+                B   B    AAAA    NNNNN NN NNNNN NN EE       RR  RRR
+        left    BBBB    AA  AA   NN  NNNN NN  NNNN EEEEEE   RRRRRRR     right
+                B   B  AAAAAAAA  NN   NNN NN   NNN EE       RR   RR
+                BBBB  AA      AA NN    NN NN    NN EEEEEEEE RR    RR
+
+                                    middle
+
+                    o--------------------------------------o
+                    |    1. choice           5. choice     |
+        bottom_left |    2. choice           6. choice     | bottom_right
+                    |    3. choice           7. choice     |
+                    |    4. choice           8. choice     |
+                    o--------------------------------------o
+
+                                    bottom
+```
+
+```python
+# (!) This is just a example
+
+from PyPanel import *
+
+border = '\n'.join((' ' * 2) + line + (' ' * 2) for line in [
+    'Support: github.com/CSM-BlueRed',
+    'Made with PyPanel',
+])
+
+main.MakeOutText(
+    middle = f'{prog.name} by {", ".join(prog.authors)}!\nMake sure to install PyPanel!',
+    bottom = 'discord.gg/plague',
+    bottom_left = border,
+    bottom_right = border
+)
+```
+
 ## Start your program
+
 To start your program, select your main panel, and use the `listen` function
 
 ```python
